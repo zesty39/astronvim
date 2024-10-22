@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- Customize Mason plugins
 
 ---@type LazySpec
@@ -33,6 +31,14 @@ return {
       ensure_installed = {
         "python",
         -- add more arguments for adding more debuggers
+      },
+    },
+  },
+  {
+    "williamboman/mason.nvim",
+    opts = {
+      ui = {
+        border = "rounded",
       },
     },
   },
