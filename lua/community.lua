@@ -16,5 +16,4 @@ return {
   { import = "astrocommunity.editing-support.stickybuf-nvim" },
   { import = "astrocommunity.recipes.telescope-lsp-mappings" },
   { import = "astrocommunity.code-runner.overseer-nvim" },
-  { import = "astrocommunity.color.transparent-nvim" },
 }

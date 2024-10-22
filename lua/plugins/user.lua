@@ -102,31 +102,6 @@ return {
   },
 
   {
-    "xiyaowong/transparent.nvim",
-    opts = function(_, opts)
-      local transparent = require "transparent"
-      opts.extra_groups = {
-        "Normal",
-        "NormalNC",
-        "NormalFloat",
-        "FloatBorder",
-        "CursorLineNr",
-        "LineNr",
-        "SignColumn",
-        "TabLine",
-        "TabLineFill",
-        "VertSplit",
-        "WinSeparator",
-        "WinBarNC",
-      }
-      transparent.clear_prefix "Telescope"
-      transparent.clear_prefix "Notify"
-      transparent.clear_prefix "Overseer"
-      vim.g.transparent_enabled = true
-    end,
-  },
-
-  {
     "stevearc/overseer.nvim",
     dependencies = {
       {
@@ -240,6 +215,61 @@ return {
       tabkey = "",
       act_as_tab = true,
       behavior = "closing",
+    },
+  },
+
+  {
+    "xiyaowong/transparent.nvim",
+    lazy = false,
+    opts = {
+      extra_groups = {
+        "Normal",
+        "NormalNC",
+        "NormalFloat",
+        "FloatBorder",
+        "CursorLineNr",
+        "LineNr",
+        "SignColumn",
+        "TabLine",
+        "TabLineFill",
+        "VertSplit",
+        "WinSeparator",
+        "WinBarNC",
+      },
+    },
+    config = function(_, opts)
+      local transparent = require "transparent"
+      transparent.setup(opts)
+      transparent.clear_prefix "BufferLine"
+      transparent.clear_prefix "NeoTree"
+      transparent.clear_prefix "lualine"
+      transparent.clear_prefix "Telescope"
+      transparent.clear_prefix "Notify"
+      transparent.clear_prefix "Overseer"
+
+      if vim.g.neovide then
+        vim.g.transparent_enabled = false
+      else
+        vim.g.transparent_enabled = true
+      end
+    end,
+    dependencies = {
+      {
+        "AstroNvim/astrocore",
+        opts = function(_, opts)
+          opts.mappings.n["<Leader>uT"] = { "<Cmd>TransparentToggle<CR>", desc = "Toggle transparency" }
+          if vim.tbl_get(opts, "autocmds", "heirline_colors") then
+            table.insert(opts.autocmds.heirline_colors, {
+              event = "User",
+              pattern = "TransparentClear",
+              desc = "Refresh heirline colors",
+              callback = function()
+                if package.loaded["heirline"] then require("astroui.status.heirline").refresh_colors() end
+              end,
+            })
+          end
+        end,
+      },
     },
   },
 }
