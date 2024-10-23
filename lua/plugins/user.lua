@@ -101,82 +101,6 @@ return {
     opts = function(_, opts) opts.indent.tab_char = "»" end,
   },
 
-  {
-    "stevearc/overseer.nvim",
-    dependencies = {
-      {
-        "AstroNvim/astrocore",
-        opts = function(_, opts)
-          local maps = opts.mappings
-          local prefix = "<leader>M"
-          maps.n[prefix .. "<CR>"] = { "<Cmd>OverseerRestartLast<CR>", desc = "Restart Last Task" }
-        end,
-      },
-    },
-    opts = function(_, opts)
-      vim.api.nvim_create_user_command("OverseerRestartLast", function()
-        local overseer = require "overseer"
-        local tasks = overseer.list_tasks { recent_first = true }
-        if vim.tbl_isempty(tasks) then
-          vim.notify("No tasks found", vim.log.levels.WARN)
-        else
-          overseer.run_action(tasks[1], "restart")
-        end
-      end, {})
-      local overseer = require "overseer"
-      overseer.register_template {
-        name = "build single C/C++ file",
-        builder = function()
-          -- Full path to current file (see :help expand())
-          local file = vim.fn.expand "%:p"
-          local exec_file = file:match "(.+)%..+$"
-          local cmd = { "g++" }
-          if vim.bo.filetype == "c" then cmd = { "gcc" } end
-          return {
-            cmd = cmd,
-            args = { file, "-o", exec_file },
-            components = { "default" },
-          }
-        end,
-        condition = {
-          filetype = { "c", "cpp", "cc" },
-        },
-      }
-      overseer.register_template {
-        name = "run single C/C++ file",
-        builder = function()
-          -- Full path to current file (see :help expand())
-          local file = vim.fn.expand "%:p"
-          local exec_file = file:match "(.+)%..+$"
-          return {
-            cmd = { exec_file },
-            components = { "default" },
-          }
-        end,
-        condition = {
-          filetype = { "c", "cpp", "cc" },
-        },
-      }
-      overseer.register_template {
-        name = "run script",
-        builder = function()
-          local file = vim.fn.expand "%:p"
-          local cmd = { file }
-          if vim.bo.filetype == "go" then cmd = { "go", "run", file } end
-          return {
-            cmd = cmd,
-            components = {
-              "default",
-            },
-          }
-        end,
-        condition = {
-          filetype = { "sh", "python", "go" },
-        },
-      }
-    end,
-  },
-
   -- new plugin
   {
     "kawre/neotab.nvim",
@@ -271,5 +195,91 @@ return {
         end,
       },
     },
+  },
+
+  {
+    "stevearc/overseer.nvim",
+    cmd = {
+      "OverseerOpen",
+      "OverseerClose",
+      "OverseerToggle",
+      "OverseerSaveBundle",
+      "OverseerLoadBundle",
+      "OverseerDeleteBundle",
+      "OverseerRunCmd",
+      "OverseerRun",
+      "OverseerInfo",
+      "OverseerBuild",
+      "OverseerQuickAction",
+      "OverseerTaskAction ",
+      "OverseerClearCache",
+    },
+    ---@param opts overseer.Config
+    opts = function(_, opts)
+      local astrocore = require "astrocore"
+      local templates = require "overseer.template.builtin"
+      if astrocore.is_available "toggleterm.nvim" then opts.strategy = "toggleterm" end
+
+      for i = #templates, 1, -1 do
+        if templates[i] == "shell" then table.remove(templates, i) end
+      end
+
+      opts.templates = templates
+      opts.task_list = {
+        bindings = {
+          ["<C-l>"] = false,
+          ["<C-h>"] = false,
+          ["<C-k>"] = false,
+          ["<C-j>"] = false,
+          q = "<Cmd>close<CR>",
+          K = "IncreaseDetail",
+          J = "DecreaseDetail",
+          ["<C-p>"] = "ScrollOutputUp",
+          ["<C-n>"] = "ScrollOutputDown",
+        },
+      }
+    end,
+    dependencies = {
+      { "AstroNvim/astroui", opts = { icons = { Overseer = "" } } },
+      {
+        "AstroNvim/astrocore",
+        opts = function(_, opts)
+          local commands = opts.commands
+          local maps = opts.mappings
+          local prefix = "<leader>o"
+          maps.n[prefix] = { desc = require("astroui").get_icon("Overseer", 1, true) .. "Overseer" }
+
+          maps.n[prefix .. "t"] = { "<Cmd>OverseerToggle<CR>", desc = "Toggle Overseer" }
+          maps.n[prefix .. "c"] = { "<Cmd>OverseerRunCmd<CR>", desc = "Run Command" }
+          maps.n[prefix .. "r"] = { "<Cmd>OverseerRun<CR>", desc = "Run Task" }
+          maps.n[prefix .. "q"] = { "<Cmd>OverseerQuickAction<CR>", desc = "Quick Action" }
+          maps.n[prefix .. "a"] = { "<Cmd>OverseerTaskAction<CR>", desc = "Task Action" }
+          maps.n[prefix .. "i"] = { "<Cmd>OverseerInfo<CR>", desc = "Overseer Info" }
+
+          commands.OverseerRestartLast = {
+            function()
+              local overseer = require "overseer"
+              local tasks = overseer.list_tasks { recent_first = true }
+              if vim.tbl_isempty(tasks) then
+                vim.notify("No tasks found", vim.log.levels.WARN)
+              else
+                overseer.run_action(tasks[1], "restart")
+              end
+            end,
+            desc = "Restart last tasks",
+          }
+        end,
+      },
+    },
+    config = function(_, opts)
+      local overseer = require "overseer"
+      local tasks = require "tasks"
+
+      for _, templates in ipairs(tasks) do
+        overseer.register_template(templates)
+      end
+
+      overseer.setup(opts)
+    end,
   },
 }

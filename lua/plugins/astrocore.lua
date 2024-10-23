@@ -49,6 +49,7 @@ return {
         -- second key is the lefthand side of the map
         ["<F7"] = false,
         ["<C-q>"] = false,
+        ["<Leader>o"] = false,
 
         -- navigate buffer tabs
         [";"] = { ":", desc = "CMD enter command mode" },
@@ -75,6 +76,9 @@ return {
           end,
         },
       },
+    },
+    commands = {
+      -- create user command here
     },
   },
 }

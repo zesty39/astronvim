@@ -15,5 +15,4 @@ return {
   { import = "astrocommunity.motion.hop-nvim" },
   { import = "astrocommunity.editing-support.stickybuf-nvim" },
   { import = "astrocommunity.recipes.telescope-lsp-mappings" },
-  { import = "astrocommunity.code-runner.overseer-nvim" },
 }
