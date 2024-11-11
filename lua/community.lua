@@ -12,7 +12,8 @@ return {
   { import = "astrocommunity.pack.rust" },
   { import = "astrocommunity.lsp.lsp-signature-nvim" },
   { import = "astrocommunity.motion.nvim-surround" },
-  { import = "astrocommunity.motion.hop-nvim" },
   { import = "astrocommunity.editing-support.stickybuf-nvim" },
+  { import = "astrocommunity.editing-support.nvim-treesitter-context" },
+  { import = "astrocommunity.editing-support.refactoring-nvim" },
   { import = "astrocommunity.recipes.telescope-lsp-mappings" },
 }

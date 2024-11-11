@@ -33,7 +33,7 @@ return {
         virtualedit = "onemore",
         fileencodings = "utf-8,gbk,chinese,latin1",
         list = true,
-        listchars = { extends = "›", precedes = "‹", trail = "·", nbsp = "␣" },
+        listchars = { tab = "   ", extends = "›", precedes = "‹", trail = "·", nbsp = "␣" },
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -46,24 +46,47 @@ return {
     mappings = {
       -- first key is the mode
       n = {
-        -- second key is the lefthand side of the map
+        -- setting a mapping to false will disable it
         ["<F7"] = false,
         ["<C-q>"] = false,
         ["<Leader>o"] = false,
+        ["gra"] = false,
+        ["grn"] = false,
+        ["grr"] = false,
 
-        -- navigate buffer tabs
-        [";"] = { ":", desc = "CMD enter command mode" },
+        -- setting user mapping
         ["<tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["<S-tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
         ["<a-=>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
-
-        -- mappings seen under group name "Buffer"
-
-        -- setting a mapping to false will disable it
+        ["<Leader>gb"] = {
+          function() require("telescope.builtin").git_branches {} end,
+          desc = "Git branches",
+        },
+        ["<Leader>gc"] = {
+          function() require("telescope.builtin").git_commits {} end,
+          desc = "Git commits (repository)",
+        },
+        ["<Leader>gC"] = {
+          function() require("telescope.builtin").git_bcommits {} end,
+          desc = "Git commits (current file)",
+        },
+        ["<Leader>gt"] = {
+          function() require("telescope.builtin").git_status {} end,
+          desc = "Git status",
+        },
       },
       t = {
+        -- setting a mapping to false will disable it
+
+        -- setting user mapping
         ["<m-q>"] = { [[<c-\><c-n>]] },
         ["<a-=>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
+      },
+      x = {
+        -- setting a mapping to false will disable it
+        ["gra"] = false,
+
+        -- setting user mapping
       },
     },
     autocmds = {
@@ -72,7 +95,7 @@ return {
           event = "VimLeave",
           callback = function()
             vim.opt.guicursor = ""
-            vim.fn.chansend(vim.v.stderr, "\x1b[ q]")
+            vim.fn.chansend(vim.v.stderr, "\27[ q")
           end,
         },
       },

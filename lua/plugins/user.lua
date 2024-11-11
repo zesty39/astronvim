@@ -92,6 +92,21 @@ return {
       },
       cmake_runner = {
         name = "overseer",
+        default_opts = {
+          overseer = {
+            new_task_opts = {
+              strategy = {
+                "toggleterm",
+                direction = "horizontal",
+                autos_croll = true,
+                open_on_start = true,
+              },
+            }, -- options to pass into the `overseer.new_task` command
+          },
+        },
+      },
+      cmake_notifications = {
+        runner = { enabled = false },
       },
     },
   },
@@ -281,5 +296,75 @@ return {
 
       overseer.setup(opts)
     end,
+  },
+  {
+    "hrsh7th/cmp-cmdline",
+    keys = { ":", "/", "?" }, -- lazy load cmp on more keys along with insert mode
+    dependencies = { "hrsh7th/nvim-cmp" },
+    opts = function()
+      local cmp = require "cmp"
+      return {
+        {
+          type = "/",
+          mapping = cmp.mapping.preset.cmdline(),
+          sources = {
+            { name = "buffer" },
+          },
+        },
+        {
+          type = ":",
+          mapping = cmp.mapping.preset.cmdline(),
+          sources = cmp.config.sources({
+            { name = "path" },
+          }, {
+            {
+              name = "cmdline",
+              option = {
+                ignore_cmds = { "Man", "!" },
+              },
+            },
+          }),
+        },
+      }
+    end,
+    config = function(_, opts)
+      local cmp = require "cmp"
+      vim.tbl_map(function(val) cmp.setup.cmdline(val.type, val) end, opts)
+    end,
+  },
+  {
+    "smoka7/hop.nvim",
+    opts = {},
+    dependencies = {
+      "AstroNvim/astrocore",
+      opts = {
+        mappings = {
+          n = {
+            ["s"] = { function() require("hop").hint_char1() end, desc = "Hop hint char1" },
+            ["<S-s>"] = { function() require("hop").hint_words() end, desc = "Hop hint words" },
+            ["<S-L>"] = { function() require("hop").hint_lines() end, desc = "Hop hint lines" },
+          },
+          v = {
+            ["s"] = { function() require("hop").hint_char1 { extend_visual = true } end, desc = "Hop hint char1" },
+            ["<S-s>"] = {
+              function() require("hop").hint_words { extend_visual = true } end,
+              desc = "Hop hint words",
+            },
+            ["<S-L>"] = {
+              function() require("hop").hint_lines { extend_visual = true } end,
+              desc = "Hop hint lines",
+            },
+          },
+        },
+      },
+    },
+    specs = {
+      {
+        "catppuccin",
+        optional = true,
+        ---@type CatppuccinOptions
+        opts = { integrations = { hop = true } },
+      },
+    },
   },
 }
