@@ -128,23 +128,38 @@ return {
         opts = function(_, opts)
           local cmp = require "cmp"
           local neotab = require "neotab"
-          local snippet_jumpable = function() return vim.snippet and vim.snippet.active { direction = 1 } end
+          local snippet_jumpable = function(dir) return vim.snippet and vim.snippet.active { direction = dir } end
           local snippet_jump = vim.schedule_wrap(function() vim.snippet.jump(1) end)
           local luasnip_avail, luasnip = pcall(require, "luasnip")
           if luasnip_avail then
-            snippet_jumpable = luasnip.expand_or_jumpable
-            snippet_jump = luasnip.expand_or_jump
+            snippet_jumpable = luasnip.jumpable
+            snippet_jump = luasnip.jump
           end
           opts.mapping["<C-E>"] = cmp.mapping(cmp.mapping.close(), { "i", "c" })
+          opts.mapping["<C-F>"] = cmp.mapping(cmp.mapping.scroll_docs(6), { "i", "c" })
+          opts.mapping["<C-B>"] = cmp.mapping(cmp.mapping.scroll_docs(-6), { "i", "c" })
+          opts.mapping["<C-D>"] = cmp.mapping(function ()
+            if snippet_jumpable(1) then
+              snippet_jump(1)
+            end
+          end, { "i", "s" })
+          opts.mapping["<C-U>"] = cmp.mapping(function ()
+            if snippet_jumpable(-1) then
+              snippet_jump(-1)
+            end
+          end, { "i", "s" })
           opts.mapping["<Tab>"] = cmp.mapping(function()
             if cmp.visible() then
               cmp.select_next_item()
-            elseif vim.api.nvim_get_mode() ~= "c" and snippet_jumpable() then
-              snippet_jump()
-            elseif not luasnip_avail and pcall(vim.snippet.active, { direction = 1 }) then
-              vim.snippet.jump(1)
             else
               neotab.tabout()
+            end
+          end, { "i", "s" })
+          opts.mapping["<S-Tab>"] = cmp.mapping(function(fallback)
+            if cmp.visible(cmp) then
+              cmp.select_prev_item()
+            else
+              fallback()
             end
           end, { "i", "s" })
         end,
