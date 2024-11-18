@@ -359,17 +359,6 @@ return {
             ["<S-s>"] = { function() require("hop").hint_words() end, desc = "Hop hint words" },
             ["<S-L>"] = { function() require("hop").hint_lines() end, desc = "Hop hint lines" },
           },
-          v = {
-            ["s"] = { function() require("hop").hint_char1 { extend_visual = true } end, desc = "Hop hint char1" },
-            ["<S-s>"] = {
-              function() require("hop").hint_words { extend_visual = true } end,
-              desc = "Hop hint words",
-            },
-            ["<S-L>"] = {
-              function() require("hop").hint_lines { extend_visual = true } end,
-              desc = "Hop hint lines",
-            },
-          },
         },
       },
     },
