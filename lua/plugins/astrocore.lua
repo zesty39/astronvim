@@ -74,6 +74,11 @@ return {
           function() require("telescope.builtin").git_status {} end,
           desc = "Git status",
         },
+
+        ["<Leader>fj"] = {
+          function() require("telescope.builtin").jumplist {} end,
+          desc = "Git status",
+        },
       },
       t = {
         -- setting a mapping to false will disable it

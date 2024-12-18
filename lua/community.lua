@@ -10,10 +10,12 @@ return {
   { import = "astrocommunity.pack.cpp" },
   { import = "astrocommunity.pack.cmake" },
   { import = "astrocommunity.pack.rust" },
+  { import = "astrocommunity.pack.bash" },
+  { import = "astrocommunity.pack.markdown" },
   { import = "astrocommunity.lsp.lsp-signature-nvim" },
   { import = "astrocommunity.motion.nvim-surround" },
   { import = "astrocommunity.editing-support.stickybuf-nvim" },
-  { import = "astrocommunity.editing-support.nvim-treesitter-context" },
   { import = "astrocommunity.editing-support.refactoring-nvim" },
   { import = "astrocommunity.recipes.telescope-lsp-mappings" },
+  { import = "astrocommunity.markdown-and-latex.markview-nvim" },
 }

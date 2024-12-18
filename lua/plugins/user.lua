@@ -6,6 +6,11 @@ return {
   { "max397574/better-escape.nvim", enabled = false },
 
   {
+    "nvim-telescope/telescope.nvim",
+    opts = function(_, opts) opts.defaults.initial_mode = "normal" end,
+  },
+
+  {
     "onsails/lspkind.nvim",
     opts = function(_, opts)
       opts.mode = "symbol_text"
@@ -138,15 +143,11 @@ return {
           opts.mapping["<C-E>"] = cmp.mapping(cmp.mapping.close(), { "i", "c" })
           opts.mapping["<C-F>"] = cmp.mapping(cmp.mapping.scroll_docs(6), { "i", "c" })
           opts.mapping["<C-B>"] = cmp.mapping(cmp.mapping.scroll_docs(-6), { "i", "c" })
-          opts.mapping["<C-D>"] = cmp.mapping(function ()
-            if snippet_jumpable(1) then
-              snippet_jump(1)
-            end
+          opts.mapping["<C-D>"] = cmp.mapping(function()
+            if snippet_jumpable(1) then snippet_jump(1) end
           end, { "i", "s" })
-          opts.mapping["<C-U>"] = cmp.mapping(function ()
-            if snippet_jumpable(-1) then
-              snippet_jump(-1)
-            end
+          opts.mapping["<C-U>"] = cmp.mapping(function()
+            if snippet_jumpable(-1) then snippet_jump(-1) end
           end, { "i", "s" })
           opts.mapping["<Tab>"] = cmp.mapping(function()
             if cmp.visible() then
@@ -197,7 +198,10 @@ return {
       transparent.clear_prefix "BufferLine"
       transparent.clear_prefix "NeoTree"
       transparent.clear_prefix "lualine"
-      transparent.clear_prefix "Telescope"
+      transparent.clear_prefix "TelescopePreviewNormal"
+      transparent.clear_prefix "TelescopePreviewBorder"
+      transparent.clear_prefix "TelescopePrompt"
+      transparent.clear_prefix "TelescopeResults"
       transparent.clear_prefix "Notify"
       transparent.clear_prefix "Overseer"
 
@@ -368,6 +372,28 @@ return {
         optional = true,
         ---@type CatppuccinOptions
         opts = { integrations = { hop = true } },
+      },
+    },
+  },
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "User AstroFile",
+    cmd = { "TSContextToggle" },
+    opts = {
+      separator = "═",
+    },
+    dependencies = {
+      "AstroNvim/astrocore",
+      ---@type AstroCoreOpts
+      opts = {
+        mappings = {
+          n = {
+            ["<Leader>uT"] = {
+              "<cmd>TSContextToggle<CR>",
+              desc = "Toggle treesitter context",
+            },
+          },
+        },
       },
     },
   },
