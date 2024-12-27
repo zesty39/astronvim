@@ -383,4 +383,40 @@ return {
       separator = "═",
     },
   },
+  {
+    "fnune/recall.nvim",
+    version = "*",
+    cmd = {
+      "RecallMark",
+      "RecallUnmark",
+      "RecallToggle",
+      "RecallNext",
+      "RecallPrevious",
+      "RecallClear",
+    },
+    opts = function(_, opts)
+      opts.sign = require("astroui").get_icon "Mark"
+    end,
+    dependencies = {
+      { "AstroNvim/astroui", opts = { icons = { Mark = "" } } },
+      {
+        "AstroNvim/astrocore",
+        opts = function(_, opts)
+          local maps = opts.mappings
+          local recall = require "recall"
+          local prefix = "<leader>m"
+          maps.n[prefix] = { desc = require("astroui").get_icon("Mark", 1, true) .. "Mark" }
+
+          maps.n[prefix .. "m"] = { function() recall.toggle() end, desc = "Toggle mark" }
+          maps.n[prefix .. "n"] = { function() recall.goto_next() end, desc = "Next mark" }
+          maps.n[prefix .. "p"] = { function() recall.goto_prev() end, desc = "Previous mark" }
+          maps.n[prefix .. "c"] = { function() recall.clear() end, desc = "Clear mark" }
+          maps.n[prefix .. "l"] = {
+            "<Cmd>Telescope recall<CR>",
+            desc = "Mark list",
+          }
+        end,
+      },
+    },
+  },
 }

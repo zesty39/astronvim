@@ -25,10 +25,11 @@ return {
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
+        jumpoptions = "stack",
         relativenumber = false, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
-        signcolumn = "yes", -- sets vim.opt.signcolumn to yes
+        signcolumn = "yes:2", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
         virtualedit = "onemore",
         fileencodings = "utf-8,gbk,chinese,latin1",
@@ -77,7 +78,7 @@ return {
 
         ["<Leader>fj"] = {
           function() require("telescope.builtin").jumplist {} end,
-          desc = "Git status",
+          desc = "Jumplists",
         },
       },
       t = {
