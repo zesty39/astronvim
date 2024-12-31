@@ -7,7 +7,35 @@ return {
 
   {
     "nvim-telescope/telescope.nvim",
-    opts = function(_, opts) opts.defaults.initial_mode = "normal" end,
+    opts = function(_, opts)
+      opts.defaults.initial_mode = "insert"
+      opts.pickers = {
+        find_files = {
+          initial_mode = "normal",
+        },
+        lsp_references = {
+          initial_mode = "normal",
+        },
+        lsp_definitions = {
+          initial_mode = "normal",
+        },
+        lsp_implementations = {
+          initial_mode = "normal",
+        },
+        lsp_incoming_calls = {
+          initial_mode = "normal",
+        },
+        lsp_outcoming_calls = {
+          initial_mode = "normal",
+        },
+      }
+    end,
+  },
+  {
+    "folke/todo-comments.nvim",
+    opts = {
+      signs = false,
+    },
   },
 
   {
@@ -317,39 +345,38 @@ return {
     end,
   },
   {
-    "hrsh7th/cmp-cmdline",
-    keys = { ":", "/", "?" }, -- lazy load cmp on more keys along with insert mode
-    dependencies = { "hrsh7th/nvim-cmp" },
-    opts = function()
-      local cmp = require "cmp"
-      return {
-        {
-          type = "/",
-          mapping = cmp.mapping.preset.cmdline(),
-          sources = {
-            { name = "buffer" },
+    "jonarrien/telescope-cmdline.nvim",
+    specs = {
+      {
+        "AstroNvim/astrocore",
+        opts = {
+          mappings = {
+            n = {
+              [";"] = { "<cmd>Telescope cmdline<cr>", desc = "Cmdline" },
+              ["<leader><leader>"] = { "<cmd>Telescope cmdline<cr>", desc = "Cmdline" },
+            },
+            v = {
+              [";"] = { "<cmd>Telescope cmdline visual<cr>", desc = "Cmdline" },
+              ["<leader><leader>"] = { "<cmd>Telescope cmdline visual<cr>", desc = "Cmdline" },
+            },
           },
         },
-        {
-          type = ":",
-          mapping = cmp.mapping.preset.cmdline(),
-          sources = cmp.config.sources({
-            { name = "path" },
-          }, {
-            {
-              name = "cmdline",
-              option = {
-                ignore_cmds = { "Man", "!" },
+      },
+      {
+        "nvim-telescope/telescope.nvim",
+        dependencies = { "jonarrien/telescope-cmdline.nvim" },
+        opts = function(_, opts)
+          opts.extensions = {
+            cmdline = {
+              picker = {
+                initial_mode = "insert",
               },
             },
-          }),
-        },
-      }
-    end,
-    config = function(_, opts)
-      local cmp = require "cmp"
-      vim.tbl_map(function(val) cmp.setup.cmdline(val.type, val) end, opts)
-    end,
+          }
+          require("telescope").load_extension "cmdline"
+        end,
+      },
+    },
   },
   {
     "smoka7/hop.nvim",
@@ -381,42 +408,6 @@ return {
     cmd = { "TSContextToggle" },
     opts = {
       separator = "═",
-    },
-  },
-  {
-    "fnune/recall.nvim",
-    version = "*",
-    cmd = {
-      "RecallMark",
-      "RecallUnmark",
-      "RecallToggle",
-      "RecallNext",
-      "RecallPrevious",
-      "RecallClear",
-    },
-    opts = function(_, opts)
-      opts.sign = require("astroui").get_icon "Mark"
-    end,
-    dependencies = {
-      { "AstroNvim/astroui", opts = { icons = { Mark = "" } } },
-      {
-        "AstroNvim/astrocore",
-        opts = function(_, opts)
-          local maps = opts.mappings
-          local recall = require "recall"
-          local prefix = "<leader>m"
-          maps.n[prefix] = { desc = require("astroui").get_icon("Mark", 1, true) .. "Mark" }
-
-          maps.n[prefix .. "m"] = { function() recall.toggle() end, desc = "Toggle mark" }
-          maps.n[prefix .. "n"] = { function() recall.goto_next() end, desc = "Next mark" }
-          maps.n[prefix .. "p"] = { function() recall.goto_prev() end, desc = "Previous mark" }
-          maps.n[prefix .. "c"] = { function() recall.clear() end, desc = "Clear mark" }
-          maps.n[prefix .. "l"] = {
-            "<Cmd>Telescope recall<CR>",
-            desc = "Mark list",
-          }
-        end,
-      },
     },
   },
 }
