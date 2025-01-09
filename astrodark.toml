@@ -1,0 +1,27 @@
+# Colors (Astrodark)
+
+[colors.primary]
+foreground = '#CCCCCC'
+background = '#1B1D1E'
+
+# Normal colors
+[colors.normal]
+black   = '#1B1D1E'
+red     = '#F8747E'
+green   = '#75AD47'
+yellow  = '#D09214'
+blue    = '#50A4E9'
+magenta = '#CC83E3'
+cyan    = '#00B298'
+white   = '#CCCCCC'
+
+# Bright colors
+[colors.bright]
+black   = '#808080'
+red     = '#FF8FA3'
+green   = '#A0D06A'
+yellow  = '#F3B539'
+blue    = '#85C9FE'
+magenta = '#F2A8F8'
+cyan    = '#23D5BD'
+white   = '#F8F8F2'
