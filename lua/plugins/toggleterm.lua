@@ -27,6 +27,7 @@ return {
         local maps = {
           n = {
             ["<a-=>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
+            ["<Leader>tr"] = { "<cmd>TermRunFile<cr>", desc = "Run files on terminal" },
           },
           t = {
             ["<a-=>"] = { "<cmd>ToggleTerm<cr>", desc = "Toggle terminal" },
