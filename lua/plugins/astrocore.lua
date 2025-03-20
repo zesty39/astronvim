@@ -26,7 +26,6 @@ return {
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
-        jumpoptions = "stack",
         relativenumber = false, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
@@ -54,6 +53,9 @@ return {
         ["<tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
         ["<S-tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
       },
+      v = {
+        [";"] = { ":" },
+      },
       i = {
         ["<F7>"] = false,
         ["<C-'>"] = false,
@@ -73,7 +75,26 @@ return {
       },
     },
     commands = {
-      -- create user command here
+      TrimFile = {
+        function()
+          local utils = require "astrocore"
+
+          vim.cmd([[%s/\s\+$//e]])
+          vim.cmd([[%s/\r//e]])
+
+          utils.notify("Formatting cleaned: Trailing spaces removed, CRLF replaced with LF.")
+        end,
+        desc = "Remove trialing white space and \\r",
+      },
+      Filename = {
+        function()
+          local utils = require "astrocore"
+          local filename = vim.api.nvim_buf_get_name(0)
+
+          utils.notify("File Name: " .. filename)
+        end,
+        desc = "Remove trialing white space and \\r",
+      },
     },
   },
 }

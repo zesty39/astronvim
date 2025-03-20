@@ -1,9 +1,10 @@
 local function terminal_exec(cmd, dir)
   local terms = require "toggleterm.terminal"
-  local exit_cmd = " && echo -e \"\\n\\nPress any key to exit ...\" && read " .. (vim.o.shell:find("zsh") and "-k 1" or "-n 1 -s") .. "&& exit $?"
+  local exec_cmd = "bash -c '" .. cmd .. "'"
+  local exit_cmd = "echo -e \"\\n\\nPress any key to exit ...\" && read " .. (vim.o.shell:find("zsh") and "-k 1" or "-n 1 -s")
 
   local term = terms.Terminal:new {
-    cmd = (cmd .. exit_cmd),
+    cmd = (exec_cmd .. " || " .. exit_cmd),
     dir = dir,
     direction = "float",
     name = "Run",

@@ -3,9 +3,13 @@ return {
   opts = function(_, opts)
     local actions = require "telescope.actions"
     local maps = {
+      i = {
+        ["<C-u>"] = actions.results_scrolling_up,
+        ["<C-d>"] = actions.results_scrolling_down,
+        ["<C-b>"] = actions.preview_scrolling_up,
+        ["<C-f>"] = actions.preview_scrolling_down,
+      },
       n = {
-        ["<C-U>"] = actions.results_scrolling_down,
-        ["<C-D>"] = actions.results_scrolling_up,
         ["|"] = actions.file_vsplit,
         ["\\"] = actions.file_split,
       }

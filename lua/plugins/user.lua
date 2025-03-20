@@ -141,6 +141,14 @@ return {
     cmd = { "TSContextToggle" },
     opts = {
       separator = "═",
+      max_lines = 2,
+    },
+  },
+
+  {
+    "Civitasv/cmake-tools.nvim",
+    opts = {
+      cmake_regenerate_on_save = false,
     },
   },
 }
