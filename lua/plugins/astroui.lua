@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroUI provides the basis for configuring the AstroNvim User Interface
 -- Configuration documentation can be found with `:h astroui`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -21,19 +19,24 @@ return {
         -- Normal = { bg = "#000000" },
       },
     },
-    -- Icons can be configured throughout the interface
-    icons = {
-      -- configure the loading of the lsp in the status line
-      LSPLoading1 = "⠋",
-      LSPLoading2 = "⠙",
-      LSPLoading3 = "⠹",
-      LSPLoading4 = "⠸",
-      LSPLoading5 = "⠼",
-      LSPLoading6 = "⠴",
-      LSPLoading7 = "⠦",
-      LSPLoading8 = "⠧",
-      LSPLoading9 = "⠇",
-      LSPLoading10 = "⠏",
+  },
+  specs = {
+    {
+      "AstroNvim/astrotheme",
+      opts = {
+        palettes = {
+          astrodark = {
+            term = {
+              black = "#1B1D1E",
+              bright_black = "#808080",
+              white = "#CCCCCC",
+              bright_white = "#F8F8F2",
+              foreground = "#CCCCCC",
+              background = "1B1D1E",
+            },
+          },
+        },
+      },
     },
   },
 }

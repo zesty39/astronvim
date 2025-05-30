@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroCore provides a central place to modify mappings, vim options, autocommands, and more!
 -- Configuration documentation can be found with `:h astrocore`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -22,6 +20,7 @@ return {
     -- Diagnostics configuration (for vim.diagnostics.config({...})) when diagnostics are on
     diagnostics = {
       virtual_text = true,
+      signs = false,
       underline = true,
     },
     -- passed to `vim.filetype.add`
@@ -40,11 +39,16 @@ return {
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
-        relativenumber = true, -- sets vim.opt.relativenumber
+        relativenumber = false, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
-        signcolumn = "yes", -- sets vim.opt.signcolumn to yes
+        signcolumn = "yes:1", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
+        virtualedit = "onemore",
+        fileencodings = "utf-8,gbk,chinese,latin1",
+        list = true,
+        listchars = { tab = "   ", extends = "›", precedes = "‹", trail = "·", nbsp = "␣" },
+        guicursor = "n-v-sm:block,i-c-ci-ve:ver25,r-cr-o:hor20",
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -57,28 +61,46 @@ return {
     mappings = {
       -- first key is the mode
       n = {
-        -- second key is the lefthand side of the map
-
-        -- navigate buffer tabs
-        ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
-        ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
-
-        -- mappings seen under group name "Buffer"
-        ["<Leader>bd"] = {
-          function()
-            require("astroui.status.heirline").buffer_picker(
-              function(bufnr) require("astrocore.buffer").close(bufnr) end
-            )
+        ["<C-q>"] = false,
+        ["<tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
+        ["<S-tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
+      },
+      i = {
+        ["<F7>"] = false,
+        ["<C-'>"] = false,
+      },
+    },
+    autocmds = {
+      restore_curosr_on_exit = {
+        {
+          event = "VimLeave",
+          callback = function()
+            vim.opt.guicursor = ""
+            vim.fn.chansend(vim.v.stderr, "\27[ q")
           end,
-          desc = "Close buffer from tabline",
         },
+      },
+    },
+    commands = {
+      TrimFile = {
+        function()
+          local utils = require "astrocore"
 
-        -- tables with just a `desc` key will be registered with which-key if it's installed
-        -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
+          vim.cmd([[%s/\s\+$//e]])
+          vim.cmd([[%s/\r//e]])
 
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
+          utils.notify("Formatting cleaned: Trailing spaces removed, CRLF replaced with LF.")
+        end,
+        desc = "Remove trialing white space and \\r",
+      },
+      Filename = {
+        function()
+          local utils = require "astrocore"
+          local filename = vim.api.nvim_buf_get_name(0)
+
+          utils.notify("File Name: " .. filename)
+        end,
+        desc = "Remove trialing white space and \\r",
       },
     },
   },
