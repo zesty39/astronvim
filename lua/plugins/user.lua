@@ -6,6 +6,34 @@
 return {
 
   -- == Examples of Adding Plugins ==
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    lazy = true,
+    ---@type CatppuccinOptions
+    ---@diagnostic disable: missing-fields
+    opts = {
+      transparent_background = true,
+      auto_integrations = true,
+      integrations = {
+        colorful_winsep = { color = "lavender" },
+        snacks = {
+          indent_scope_color = "lavender",
+        },
+      },
+    },
+    specs = {
+      {
+        "akinsho/bufferline.nvim",
+        optional = true,
+        opts = function(_, opts)
+          return require("astrocore").extend_tbl(opts, {
+            highlights = require("catppuccin.special.bufferline").get_theme(),
+          })
+        end,
+      },
+    },
+  },
 
   -- == Examples of Overriding Plugins ==
 
