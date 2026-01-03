@@ -248,35 +248,11 @@ return {
     },
   },
   {
-    "smoka7/hop.nvim",
-    opts = {},
-    dependencies = {
-      "AstroNvim/astrocore",
-      opts = {
-        mappings = {
-          n = {
-            ["s"] = { function() require("hop").hint_char1() end, desc = "Hop hint char1" },
-            ["<S-s>"] = { function() require("hop").hint_words() end, desc = "Hop hint words" },
-            ["<S-L>"] = { function() require("hop").hint_lines() end, desc = "Hop hint lines" },
-          },
-        },
-      },
-    },
-    specs = {
-      {
-        "catppuccin",
-        optional = true,
-        ---@type CatppuccinOptions
-        opts = { integrations = { hop = true } },
-      },
-    },
-  },
-  {
     "nvim-treesitter/nvim-treesitter-context",
     event = "User AstroFile",
     cmd = { "TSContextToggle" },
     opts = {
-      separator = "═",
+      -- separator = "═",
       max_lines = 2,
     },
   },
