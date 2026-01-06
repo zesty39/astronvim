@@ -62,8 +62,20 @@ return {
       -- first key is the mode
       n = {
         ["<C-q>"] = false,
-        ["<tab>"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
-        ["<S-tab>"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
+        ["<Tab>"] = function()
+          if not vim.g.vscode then
+            require("astrocore.buffer").nav(vim.v.count1)
+          else
+            return "<tab>"
+          end
+        end,
+        ["<S-Tab>"] = function()
+          if not vim.g.vscode then
+            require("astrocore.buffer").nav(-vim.v.count1)
+          else
+            return "<tab>"
+          end
+        end,
       },
       i = {
         ["<F7>"] = false,
