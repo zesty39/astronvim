@@ -1,5 +1,62 @@
 if not vim.g.vscode then return {} end -- don't do anything in non-vscode instances
 
+local function toggle_preview(command, direction, extensions)
+    local vscode = require "vscode"
+
+    local args = {
+        cmd = command,
+        dir = direction,
+        exts = extensions
+    }
+
+    local js_code = [[
+        const { cmd, dir, exts } = args;
+
+        const editor = vscode.window.activeTextEditor;
+        const currentFile = editor ? editor.document.fileName.toLowerCase() : "";
+        const isTargetFile = exts.some(ext => currentFile.endsWith(ext.toLowerCase()));
+
+        const tabGroups = vscode.window.tabGroups;
+        let existingTab = null;
+        for (const group of tabGroups.all) {
+            for (const tab of group.tabs) {
+                const label = (tab.label || "").toLowerCase();
+                if ((label.includes("preview") || label.includes("预览")) && 
+                    exts.some(ext => label.endsWith(ext.toLowerCase()))) {
+                    existingTab = tab;
+                    break;
+                }
+            }
+            if (existingTab) break;
+        }
+
+        if (existingTab) {
+            await tabGroups.close(existingTab);
+            return "Closed";
+        }
+
+        if (!isTargetFile) {
+            return "Ignored: Not a target file extension";
+        }
+
+        const config = vscode.workspace.getConfiguration('workbench.editor');
+        try {
+            await config.update('openSideBySideDirection', dir, vscode.ConfigurationTarget.Workspace);
+            await new Promise(resolve => setTimeout(resolve, 50));
+            await vscode.commands.executeCommand(cmd);
+            await vscode.commands.executeCommand('workbench.action.focusFirstEditorGroup');
+
+            return "Opened";
+        } catch (e) {
+            return "Error: " + e.message;
+        } finally {
+            await config.update('openSideBySideDirection', undefined, vscode.ConfigurationTarget.Workspace);
+        }
+    ]]
+
+    return vscode.eval_async(js_code, { args = args })
+end
+
 return {
   {
     "AstroNvim/astrocore",
@@ -12,12 +69,12 @@ return {
 
       -- basic actions
       maps.n["j"] = function()
-        require("vscode-neovim").call("cursorMove", {
+        require("vscode-neovim").action("cursorMove", {
           args = { to = "down", by = "wrappedLine", value = 1 },
         })
       end
       maps.n["k"] = function()
-        require("vscode-neovim").call("cursorMove", {
+        require("vscode-neovim").action("cursorMove", {
           args = { to = "up", by = "wrappedLine", value = 1 },
         })
       end
@@ -45,13 +102,14 @@ return {
 
       -- file explorer
       maps.n["<Leader>o"] = false
+      maps.n["<Leader>p"] = function() require("vscode").action "solutionExplorer.focus" end
 
       -- indentation
 
       -- diagnostics
 
       -- pickers (emulate telescope mappings)
-      maps.n["<Leader><Leader>"] = function() require("vscode").action "workbench.action.quickOpen" end
+      maps.n["<Leader><Leader>"] = function() require("vscode").action "workbench.action.showCommands" end
 
       -- git client
       maps.n["]g"] = function() require("vscode").action "workbench.action.editor.nextChange" end
@@ -71,6 +129,18 @@ return {
       -- Tasks
       maps.n["<Leader>rr"] = function() require("vscode").action "workbench.action.tasks.runTask" end
       maps.n["<Leader>rc"] = function() require("vscode").action "workbench.action.tasks.configureTaskRunner" end
+
+      -- AI Mappings
+
+      -- Tasks
+      maps.n["<Leader>um"] = function()
+        toggle_preview("markdown.showPreviewToSide", "right", { ".md" });
+        --vim.defer_fn(function() require("vscode").action "workbench.action.focusFirstEditorGroup" end, 200)
+      end
+      maps.n["<Leader>ua"] = function()
+        toggle_preview("avalonia.showPreviewToSide", "down", { ".axaml", "xaml"});
+        -- vim.defer_fn(function() require("vscode").action "workbench.action.focusFirstEditorGroup" end, 200)
+      end
     end,
   },
 }
