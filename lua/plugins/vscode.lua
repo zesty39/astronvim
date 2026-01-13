@@ -125,10 +125,14 @@ return {
       maps.n["<Leader>gU"] = function() require("vscode").action "git.unstageAll" end
 
       -- LSP Mappings
+      maps.n["cr"] = function() require("vscode").action "editor.action.rename" end
+      maps.n["ca"] = function() require("vscode").action "editor.action.quickFix" end
 
       -- Tasks
-      maps.n["<Leader>rr"] = function() require("vscode").action "workbench.action.tasks.runTask" end
+      maps.n["<Leader>rt"] = function() require("vscode").action "workbench.action.tasks.runTask" end
       maps.n["<Leader>rc"] = function() require("vscode").action "workbench.action.tasks.configureTaskRunner" end
+      maps.n["<Leader>rr"] = function() require("vscode").action "workbench.action.debug.run" end
+      maps.n["<Leader>rd"] = function() require("vscode").action "workbench.action.debug.start" end
 
       -- AI Mappings
 
