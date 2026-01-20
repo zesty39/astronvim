@@ -1,15 +1,15 @@
 if not vim.g.vscode then return {} end -- don't do anything in non-vscode instances
 
 local function toggle_preview(command, direction, extensions)
-    local vscode = require "vscode"
+  local vscode = require "vscode"
 
-    local args = {
-        cmd = command,
-        dir = direction,
-        exts = extensions
-    }
+  local args = {
+    cmd = command,
+    dir = direction,
+    exts = extensions,
+  }
 
-    local js_code = [[
+  local js_code = [[
         const { cmd, dir, exts } = args;
 
         const editor = vscode.window.activeTextEditor;
@@ -54,7 +54,7 @@ local function toggle_preview(command, direction, extensions)
         }
     ]]
 
-    return vscode.eval_async(js_code, { args = args })
+  return vscode.eval_async(js_code, { args = args })
 end
 
 return {
@@ -141,11 +141,11 @@ return {
 
       -- Tasks
       maps.n["<Leader>um"] = function()
-        toggle_preview("markdown.showPreviewToSide", "right", { ".md" });
+        toggle_preview("markdown.showPreviewToSide", "right", { ".md" })
         --vim.defer_fn(function() require("vscode").action "workbench.action.focusFirstEditorGroup" end, 200)
       end
       maps.n["<Leader>ua"] = function()
-        toggle_preview("avalonia.showPreviewToSide", "down", { ".axaml", "xaml"});
+        toggle_preview("avalonia.showPreviewToSide", "down", { ".axaml", "xaml" })
         -- vim.defer_fn(function() require("vscode").action "workbench.action.focusFirstEditorGroup" end, 200)
       end
     end,
