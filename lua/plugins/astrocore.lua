@@ -62,18 +62,18 @@ return {
       -- first key is the mode
       n = {
         ["<C-q>"] = false,
-        ["<Tab>"] = function()
+        ["L"] = function()
           if not vim.g.vscode then
             require("astrocore.buffer").nav(vim.v.count1)
           else
-            return "<tab>"
+            return "<Cmd>Tabnext<CR>"
           end
         end,
-        ["<S-Tab>"] = function()
+        ["H"] = function()
           if not vim.g.vscode then
             require("astrocore.buffer").nav(-vim.v.count1)
           else
-            return "<tab>"
+            return "<Cmd>Tabprevious<CR>"
           end
         end,
       },

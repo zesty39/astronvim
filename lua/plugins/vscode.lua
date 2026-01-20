@@ -97,8 +97,6 @@ return {
       maps.n["<F7>"] = false
 
       -- buffer management
-      maps.n["L"] = "<Cmd>Tabnext<CR>"
-      maps.n["H"] = "<Cmd>Tabprevious<CR>"
 
       -- file explorer
       maps.n["<Leader>o"] = false
@@ -135,6 +133,11 @@ return {
       maps.n["<Leader>rd"] = function() require("vscode").action "workbench.action.debug.start" end
 
       -- AI Mappings
+      maps.n["<Leader>aa"] = function() require("vscode").action "windsurf.prioritized.chat.open" end
+      maps.v["<Leader>aa"] = function() require("vscode").action "windsurf.prioritized.chat.open" end
+      maps.n["<Leader>ai"] = function() require("vscode").action "windsurf.prioritized.command.open" end
+      maps.v["<Leader>ai"] = function() require("vscode").action "windsurf.prioritized.command.open" end
+      maps.n["<Leader>af"] = function() require("vscode").action "windsurf.addCurrentFileToChat" end
 
       -- Tasks
       maps.n["<Leader>um"] = function()
