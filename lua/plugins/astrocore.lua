@@ -1,5 +1,3 @@
-if true then return {} end -- WARN: REMOVE THIS LINE TO ACTIVATE THIS FILE
-
 -- AstroCore provides a central place to modify mappings, vim options, autocommands, and more!
 -- Configuration documentation can be found with `:h astrocore`
 -- NOTE: We highly recommend setting up the Lua Language Server (`:LspInstall lua_ls`)
@@ -40,11 +38,14 @@ return {
     -- vim options can be configured here
     options = {
       opt = { -- vim.opt.<key>
-        relativenumber = true, -- sets vim.opt.relativenumber
+        relativenumber = false, -- sets vim.opt.relativenumber
         number = true, -- sets vim.opt.number
         spell = false, -- sets vim.opt.spell
         signcolumn = "yes", -- sets vim.opt.signcolumn to yes
         wrap = false, -- sets vim.opt.wrap
+        fileencodings = "utf-8,gbk,chinese,latin1",
+        list = true,
+        listchars = { tab = "   ", extends = "›", precedes = "‹", trail = "·", nbsp = "␣" },
       },
       g = { -- vim.g.<key>
         -- configure global vim variables (vim.g)
@@ -57,28 +58,89 @@ return {
     mappings = {
       -- first key is the mode
       n = {
-        -- second key is the lefthand side of the map
-
-        -- navigate buffer tabs
-        ["]b"] = { function() require("astrocore.buffer").nav(vim.v.count1) end, desc = "Next buffer" },
-        ["[b"] = { function() require("astrocore.buffer").nav(-vim.v.count1) end, desc = "Previous buffer" },
-
-        -- mappings seen under group name "Buffer"
-        ["<Leader>bd"] = {
+        ["<C-q>"] = false,
+        ["L"] = function()
+          if not vim.g.vscode then
+            require("astrocore.buffer").nav(vim.v.count1)
+          else
+            return "<Cmd>Tabnext<CR>"
+          end
+        end,
+        ["H"] = function()
+          if not vim.g.vscode then
+            require("astrocore.buffer").nav(-vim.v.count1)
+          else
+            return "<Cmd>Tabprevious<CR>"
+          end
+        end,
+      },
+      i = {
+        ["<F7>"] = false,
+        ["<C-'>"] = false,
+        ["<Esc>"] = {
           function()
-            require("astroui.status.heirline").buffer_picker(
-              function(bufnr) require("astrocore.buffer").close(bufnr) end
-            )
+            local ok, luasnip = pcall(require, "luasnip")
+            if ok then
+              local bufnr = vim.api.nvim_get_current_buf()
+              local node = luasnip.session
+                and luasnip.session.current_nodes
+                and luasnip.session.current_nodes[bufnr]
+
+              if node then
+                luasnip.unlink_current()
+              end
+            end
+
+            return "<Esc>"
           end,
-          desc = "Close buffer from tabline",
+          expr = true,
+          desc = "Exit insert mode and clear LuaSnip session",
         },
+      },
+      s = {
+        ["<Esc>"] = {
+          function()
+            local ok, luasnip = pcall(require, "luasnip")
+            if ok then
+              local bufnr = vim.api.nvim_get_current_buf()
+              local node = luasnip.session
+                and luasnip.session.current_nodes
+                and luasnip.session.current_nodes[bufnr]
 
-        -- tables with just a `desc` key will be registered with which-key if it's installed
-        -- this is useful for naming menus
-        -- ["<Leader>b"] = { desc = "Buffers" },
+              if node then
+                luasnip.unlink_current()
+              end
+            end
 
-        -- setting a mapping to false will disable it
-        -- ["<C-S>"] = false,
+            return "<Esc>"
+          end,
+          expr = true,
+          desc = "Exit select mode and clear LuaSnip session",
+        },
+      },
+    },
+    autocmds = {
+    },
+    commands = {
+      TrimFile = {
+        function()
+          local utils = require "astrocore"
+
+          vim.cmd([[%s/\s\+$//e]])
+          vim.cmd([[%s/\r//e]])
+
+          utils.notify("Formatting cleaned: Trailing spaces removed, CRLF replaced with LF.")
+        end,
+        desc = "Remove trialing white space and \\r",
+      },
+      Filename = {
+        function()
+          local utils = require "astrocore"
+          local filename = vim.api.nvim_buf_get_name(0)
+
+          utils.notify("File Name: " .. filename)
+        end,
+        desc = "Remove trialing white space and \\r",
       },
     },
   },
